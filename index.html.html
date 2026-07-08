@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vels Drop Taxi — One Way, Round Trip & Airport Taxi Service in Tamil Nadu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F8F5EE;
+    --paper-dim:#F0ECE1;
+    --ink:#15181B;
+    --ink-soft:#4B5359;
+    --amber:#FFB627;
+    --amber-deep:#E89A0C;
+    --teal:#0B6E6E;
+    --teal-deep:#084F4F;
+    --signal:#E1472F;
+    --line:#D8D2C2;
+    --white:#FFFFFF;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Big Shoulders Display', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    line-height:0.95;
+    color:var(--ink);
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+  section{position:relative;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--teal-deep);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:14px;
+  }
+  .eyebrow::before{content:""; width:26px; height:2px; background:var(--amber-deep); display:inline-block;}
+
+  /* ---------- dashed lane divider signature element ---------- */
+  .lane{
+    height:34px;
+    display:flex; align-items:center;
+    overflow:hidden;
+    background:var(--ink);
+    position:relative;
+  }
+  .lane .dashes{
+    position:absolute; left:0; top:50%; transform:translateY(-50%);
+    display:flex; gap:28px;
+    animation: drive 6s linear infinite;
+    white-space:nowrap;
+  }
+  .lane .dashes span{
+    width:34px; height:5px; background:var(--amber); border-radius:2px; flex:none;
+  }
+  @keyframes drive{ from{transform:translate(0,-50%);} to{transform:translate(-124px,-50%);} }
+  @media (prefers-reduced-motion: reduce){ .lane .dashes{animation:none;} }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 0;
+  }
+  .logo{
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:800;
+    font-size:26px;
+    letter-spacing:0.02em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{width:10px; height:10px; background:var(--signal); border-radius:50%;}
+  nav.links{display:flex; gap:28px; font-size:14px; font-weight:600;}
+  nav.links a:hover{color:var(--teal-deep);}
+  .navcall{
+    background:var(--ink); color:var(--paper); padding:10px 18px; border-radius:100px;
+    font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px;
+  }
+  .hide-mobile{}
+  @media (max-width:820px){ nav.links{display:none;} }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 26px; border-radius:100px; font-weight:700; font-size:15px;
+    cursor:pointer; border:2px solid transparent; transition:transform .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--signal); color:var(--white);}
+  .btn-secondary{background:transparent; color:var(--ink); border-color:var(--ink);}
+  .btn-dark{background:var(--ink); color:var(--paper);}
+  .btn-outline-light{background:transparent; color:var(--white); border-color:rgba(255,255,255,.5);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--ink);
+    color:var(--paper);
+    padding:64px 0 0;
+    overflow:hidden;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center;
+    padding-bottom:56px;
+  }
+  .hero h1{
+    font-size:clamp(38px,5.2vw,64px);
+    color:var(--white);
+    margin-bottom:20px;
+  }
+  .hero h1 em{font-style:normal; color:var(--amber);}
+  .hero .sub{
+    font-size:19px; font-weight:600; color:var(--amber); margin-bottom:14px;
+  }
+  .hero p.intro{
+    color:#C9CFD2; font-size:16px; max-width:480px; margin-bottom:30px;
+  }
+  .hero-ctas{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:40px;}
+  .stats-row{display:flex; gap:36px; flex-wrap:wrap;}
+  .stat b{
+    font-family:'Big Shoulders Display', sans-serif; font-size:34px; color:var(--white); display:block;
+  }
+  .stat span{font-size:13px; color:#9AA3A8; text-transform:uppercase; letter-spacing:.05em;}
+
+  /* route art */
+  .route-art{
+    position:relative; height:380px;
+    background:linear-gradient(180deg, #1D2226, #14181B);
+    border-radius:20px;
+    border:1px solid #2A2F33;
+    overflow:hidden;
+  }
+  .route-art .road{
+    position:absolute; left:0; right:0; top:52%; height:6px; background:#2A2F33;
+  }
+  .route-art .roaddash{
+    position:absolute; left:0; right:0; top:calc(52% + 1.5px); height:3px;
+    background-image:repeating-linear-gradient(90deg, var(--amber) 0 26px, transparent 26px 52px);
+    animation: drive 3.2s linear infinite;
+  }
+  .route-art .pin{
+    position:absolute; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .route-art .pin .dot{width:14px; height:14px; border-radius:50%; background:var(--signal); border:3px solid var(--ink);}
+  .route-art .pin.start{left:8%;}
+  .route-art .pin.end{right:8%;}
+  .route-art .pin .lbl{font-size:12px; font-family:'IBM Plex Mono',monospace; color:#C9CFD2; white-space:nowrap;}
+  .route-art .car{
+    position:absolute; top:calc(52% - 13px); font-size:22px;
+    animation: carmove 3.2s linear infinite;
+  }
+  @keyframes carmove{ 0%{left:9%;} 100%{left:82%;} }
+  .route-art .badge{
+    position:absolute; top:20px; left:20px; background:var(--amber); color:var(--ink);
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; padding:6px 12px; border-radius:8px;
+  }
+
+  /* ---------- BOOKING WIDGET ---------- */
+  .booking-wrap{margin-top:-64px; position:relative; z-index:5; padding-bottom:60px;}
+  .booking-card{
+    background:var(--white);
+    border-radius:20px;
+    box-shadow:0 24px 60px -20px rgba(20,24,27,.35);
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .tabs{display:flex;}
+  .tab{
+    flex:1; text-align:center; padding:18px; font-weight:700; font-size:15px;
+    background:var(--paper-dim); cursor:pointer; border-bottom:3px solid transparent;
+    text-transform:uppercase; letter-spacing:.03em; font-family:'IBM Plex Mono',monospace; font-size:13px;
+  }
+  .tab.active{background:var(--white); border-bottom:3px solid var(--signal); color:var(--signal);}
+  .tab-panel{padding:28px 30px 30px; display:none;}
+  .tab-panel.active{display:block;}
+  .form-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:22px;
+  }
+  .field label{
+    display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--ink-soft); margin-bottom:6px;
+  }
+  .field input, .field select{
+    width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:10px;
+    font-family:inherit; font-size:14px; background:var(--paper-dim); color:var(--ink);
+  }
+  .field input:focus, .field select:focus{outline:2px solid var(--teal); outline-offset:1px; background:var(--white);}
+  @media (max-width:760px){ .form-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:520px){ .form-grid{grid-template-columns:1fr;} }
+
+  /* ---------- TRUST STRIP ---------- */
+  .trust-strip{background:var(--teal); color:var(--white); padding:26px 0;}
+  .trust-row{display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap;}
+  .trust-item{display:flex; align-items:center; gap:12px; font-weight:600; font-size:14.5px; flex:1; min-width:200px;}
+  .trust-item .ic{width:38px; height:38px; flex:none; background:rgba(255,255,255,.12); border-radius:10px; display:flex; align-items:center; justify-content:center;}
+
+  /* ---------- generic section spacing ---------- */
+  .section{padding:76px 0;}
+  .section-head{max-width:640px; margin-bottom:44px;}
+  .section-head h2{font-size:clamp(28px,3.6vw,42px);}
+  .section-head p{color:var(--ink-soft); font-size:16px; margin-top:10px;}
+
+  /* ---------- SERVICES ---------- */
+  .cards-4{display:grid; grid-template-columns:repeat(4,1fr); gap:20px;}
+  @media (max-width:980px){.cards-4{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.cards-4{grid-template-columns:1fr;}}
+  .service-card{
+    background:var(--white); border:1px solid var(--line); border-radius:16px; padding:26px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .service-card .ic{
+    width:48px; height:48px; border-radius:12px; background:var(--amber);
+    display:flex; align-items:center; justify-content:center; font-size:22px;
+  }
+  .service-card h3{font-family:'Work Sans'; text-transform:none; font-size:19px; font-weight:700; letter-spacing:0;}
+  .service-card p{color:var(--ink-soft); font-size:14.5px; flex:1;}
+  .card-ctas{display:flex; gap:10px; margin-top:6px;}
+  .card-ctas a{font-size:13px; font-weight:700; padding:9px 14px; border-radius:100px;}
+  .ca-know{border:1.5px solid var(--ink); color:var(--ink);}
+  .ca-book{background:var(--ink); color:var(--paper);}
+
+  /* ---------- RATES / FLEET ---------- */
+  .meter-panel{
+    background:var(--ink); border-radius:20px; padding:6px; overflow:hidden;
+  }
+  table.rates{width:100%; border-collapse:collapse; background:#1D2226; border-radius:16px; overflow:hidden;}
+  table.rates th, table.rates td{padding:16px 20px; text-align:left; font-size:14.5px; color:#DDE2E4;}
+  table.rates thead th{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:.08em;
+    color:#8E979C; border-bottom:1px solid #2A2F33; padding-bottom:14px;
+  }
+  table.rates tbody tr:not(:last-child) td{border-bottom:1px solid #262B2F;}
+  table.rates td.veh{font-weight:700; color:var(--white);}
+  table.rates td.rate{font-family:'IBM Plex Mono',monospace; color:var(--amber); font-weight:600;}
+  .rate-book{
+    font-size:12.5px; font-weight:700; padding:7px 14px; border-radius:100px; background:var(--amber); color:var(--ink);
+    display:inline-block;
+  }
+  .fare-notes{display:flex; gap:28px; flex-wrap:wrap; margin-top:22px;}
+  .fare-notes div{
+    flex:1; min-width:220px; background:var(--white); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; font-size:14px; color:var(--ink-soft);
+  }
+  .fare-notes b{color:var(--ink); display:block; font-family:'IBM Plex Mono',monospace; font-size:13px; margin-bottom:4px;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid; grid-template-columns:0.85fr 1.15fr; gap:48px; align-items:center;}
+  @media (max-width:860px){.about-grid{grid-template-columns:1fr;}}
+  .about-media{
+    background:linear-gradient(135deg, var(--teal), var(--teal-deep));
+    border-radius:20px; height:320px; position:relative; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .play-btn{
+    width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.95);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:22px; color:var(--teal-deep);
+  }
+  .about-counter{
+    display:inline-flex; align-items:baseline; gap:8px; background:var(--paper-dim);
+    padding:10px 18px; border-radius:100px; margin:18px 0; font-weight:700;
+  }
+  .about-counter b{font-family:'Big Shoulders Display'; font-size:26px; color:var(--signal);}
+
+  /* ---------- ROUTES ---------- */
+  .routes-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  @media (max-width:980px){.routes-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.routes-grid{grid-template-columns:1fr;}}
+  .route-card{
+    background:var(--white); border:1.5px dashed var(--line); border-radius:14px; padding:20px;
+    position:relative;
+  }
+  .route-card::before{
+    content:"→"; position:absolute; top:18px; right:18px; color:var(--amber-deep); font-weight:800; font-size:18px;
+  }
+  .route-card h4{font-size:16.5px; font-weight:700; margin-bottom:8px; padding-right:26px;}
+  .route-meta{display:flex; gap:14px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-soft); margin-bottom:14px;}
+  .route-card a.rbtn{
+    font-size:12.5px; font-weight:700; color:var(--teal-deep); border-bottom:2px solid var(--teal-deep); padding-bottom:2px;
+  }
+  .view-all-wrap{text-align:center; margin-top:30px;}
+
+  /* ---------- WHY CHOOSE US ---------- */
+  .why-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  @media (max-width:820px){.why-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.why-grid{grid-template-columns:1fr;}}
+  .why-item{display:flex; gap:16px; align-items:flex-start;}
+  .why-item .ic{
+    width:46px; height:46px; flex:none; border-radius:12px; background:var(--ink); color:var(--amber);
+    display:flex; align-items:center; justify-content:center; font-size:20px;
+  }
+  .why-item h4{font-size:16px; font-weight:700; margin-bottom:4px;}
+  .why-item p{color:var(--ink-soft); font-size:13.5px;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps-row{display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative;}
+  @media (max-width:860px){.steps-row{grid-template-columns:1fr 1fr;}}
+  @media (max-width:560px){.steps-row{grid-template-columns:1fr;}}
+  .step{padding:0 20px; position:relative;}
+  .step .num{
+    font-family:'Big Shoulders Display'; font-size:46px; color:var(--line); margin-bottom:10px; line-height:1;
+  }
+  .step h4{font-size:16px; font-weight:700; margin-bottom:6px;}
+  .step p{font-size:13.5px; color:var(--ink-soft);}
+  .step:not(:last-child)::after{
+    content:""; position:absolute; top:26px; right:-4px; width:calc(100% - 30px); height:2px;
+    background-image:repeating-linear-gradient(90deg, var(--amber-deep) 0 8px, transparent 8px 16px);
+    display:none;
+  }
+  @media (min-width:861px){ .step:not(:last-child)::after{display:block;} }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .test-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:860px){.test-grid{grid-template-columns:1fr;}}
+  .test-card{background:var(--white); border:1px solid var(--line); border-radius:16px; padding:24px;}
+  .stars{color:var(--amber-deep); font-size:15px; margin-bottom:10px; letter-spacing:2px;}
+  .test-card p{font-size:14.5px; color:var(--ink-soft); margin-bottom:16px;}
+  .test-who{display:flex; align-items:center; gap:12px;}
+  .test-who .av{width:38px; height:38px; border-radius:50%; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;}
+  .test-who b{font-size:14px; display:block;}
+  .test-who span{font-size:12px; color:var(--ink-soft);}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{
+    width:100%; text-align:left; padding:20px 0; background:none; border:none; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center; font-size:16px; font-weight:600; color:var(--ink);
+    font-family:inherit;
+  }
+  .faq-q .plus{font-family:'IBM Plex Mono',monospace; font-size:20px; color:var(--signal); flex:none; margin-left:16px; transition:transform .2s;}
+  .faq-item.open .faq-q .plus{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .25s ease; font-size:14.5px; color:var(--ink-soft);}
+  .faq-item.open .faq-a{max-height:200px; padding-bottom:20px;}
+
+  /* ---------- BLOG ---------- */
+  .blog-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  @media (max-width:980px){.blog-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:560px){.blog-grid{grid-template-columns:1fr;}}
+  .blog-card{background:var(--white); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  .blog-thumb{height:120px; background:linear-gradient(135deg, var(--amber), var(--amber-deep));}
+  .blog-body{padding:18px;}
+  .blog-body span.tag{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--teal-deep); text-transform:uppercase;}
+  .blog-body h4{font-size:15px; font-weight:700; margin:8px 0 0; line-height:1.3;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink); color:#B9C0C4; padding:60px 0 24px;}
+  .foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr; gap:32px; margin-bottom:40px;}
+  @media (max-width:900px){.foot-grid{grid-template-columns:1fr 1fr;}}
+  @media (max-width:560px){.foot-grid{grid-template-columns:1fr;}}
+  footer h5{font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--white); margin-bottom:16px; font-family:'IBM Plex Mono',monospace;}
+  footer ul{list-style:none;}
+  footer li{margin-bottom:10px; font-size:14px;}
+  footer li a:hover{color:var(--amber);}
+  .foot-logo{font-family:'Big Shoulders Display'; font-size:24px; color:var(--white); margin-bottom:12px;}
+  .foot-news{display:flex; gap:8px; margin-top:14px;}
+  .foot-news input{flex:1; padding:10px 12px; border-radius:8px; border:1px solid #333; background:#1D2226; color:#fff; font-size:13px;}
+  .foot-news button{background:var(--signal); color:#fff; border:none; padding:0 16px; border-radius:8px; font-weight:700; cursor:pointer;}
+  .foot-bottom{border-top:1px solid #262B2F; padding-top:20px; font-size:12.5px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  ::selection{background:var(--amber); color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo"><span class="dot"></span>VELS DROP TAXI</div>
+    <nav class="links">
+      <a href="#services">Services</a>
+      <a href="#rates">Tariff</a>
+      <a href="#routes">Routes</a>
+      <a href="#about">About</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="navcall" href="tel:+910000000000">📞 Call Now</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="sub">Your Reliable Taxi Partner for Every Journey</div>
+      <h1>One Way, Round Trip &amp; <em>Airport Taxi</em> Service in Tamil Nadu</h1>
+      <p class="intro">Book a one-way drop, round trip, or airport transfer in minutes. Professional drivers, transparent pricing, and on-time pickups across Tamil Nadu, Chennai, Coimbatore, and Bangalore.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#booking">Book Now</a>
+        <a class="btn btn-outline-light" href="#">▶ Watch Video</a>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><b>200+</b><span>Satisfied Clients</span></div>
+        <div class="stat"><b>100+</b><span>People Pickup</span></div>
+        <div class="stat"><b>680+</b><span>Road Trips Done</span></div>
+        <div class="stat"><b>300+</b><span>Happy Clients</span></div>
+      </div>
+    </div>
+    <div class="route-art">
+      <div class="badge">TRICHY → CHENNAI · 320KM</div>
+      <div class="road"></div>
+      <div class="roaddash"></div>
+      <div class="pin start"><span class="lbl">TRICHY</span><span class="dot"></span></div>
+      <div class="pin end"><span class="lbl">CHENNAI</span><span class="dot"></span></div>
+      <div class="car">🚕</div>
+    </div>
+  </div>
+</section>
+
+<div class="lane"><div class="dashes"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+
+<!-- ================= BOOKING WIDGET ================= -->
+<div class="wrap booking-wrap" id="booking">
+  <div class="booking-card">
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('oneway')">Oneway Drop</div>
+      <div class="tab" onclick="showTab('round')">Round Trip</div>
+    </div>
+
+    <div class="tab-panel active" id="panel-oneway">
+      <div class="form-grid">
+        <div class="field"><label>Name</label><input type="text" placeholder="Your full name"></div>
+        <div class="field"><label>Mobile Number</label><input type="tel" placeholder="10-digit mobile number"></div>
+        <div class="field"><label>Passengers</label><select><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
+        <div class="field"><label>Pickup Location</label><select><option>Trichy</option><option>Chennai</option><option>Coimbatore</option><option>Bangalore</option></select></div>
+        <div class="field"><label>Drop Location</label><select><option>Chennai</option><option>Trichy</option><option>Madurai</option><option>Bangalore</option></select></div>
+        <div class="field"><label>Pickup Date</label><input type="date"></div>
+        <div class="field"><label>Pickup Time</label><input type="time"></div>
+      </div>
+      <a class="btn btn-primary" href="#">Book Taxi Now</a>
+    </div>
+
+    <div class="tab-panel" id="panel-round">
+      <div class="form-grid">
+        <div class="field"><label>Name</label><input type="text" placeholder="Your full name"></div>
+        <div class="field"><label>Mobile Number</label><input type="tel" placeholder="10-digit mobile number"></div>
+        <div class="field"><label>Passengers</label><select><option>1</option><option>2</option><option>3</option><option>4+</option></select></div>
+        <div class="field"><label>Pickup Location</label><select><option>Trichy</option><option>Chennai</option><option>Coimbatore</option><option>Bangalore</option></select></div>
+        <div class="field"><label>Drop Location</label><select><option>Chennai</option><option>Trichy</option><option>Madurai</option><option>Bangalore</option></select></div>
+        <div class="field"><label>Pickup Date</label><input type="date"></div>
+        <div class="field"><label>Return Date</label><input type="date"></div>
+      </div>
+      <a class="btn btn-primary" href="#">Book Round Trip</a>
+    </div>
+  </div>
+</div>
+
+<!-- ================= TRUST STRIP ================= -->
+<div class="trust-strip">
+  <div class="wrap trust-row">
+    <div class="trust-item"><span class="ic">🛡️</span> Safe &amp; Secure Rides</div>
+    <div class="trust-item"><span class="ic">⏱️</span> On-Time Pickup</div>
+    <div class="trust-item"><span class="ic">💰</span> Transparent, Affordable Pricing</div>
+    <div class="trust-item"><span class="ic">📞</span> 24/7 Customer Support</div>
+  </div>
+</div>
+
+<!-- ================= SERVICES ================= -->
+<section class="section" id="services">
+  <div class="wrap">
+    <div class="eyebrow">What We Offer</div>
+    <div class="section-head"><h2>Our Taxi Services</h2></div>
+    <div class="cards-4">
+      <div class="service-card">
+        <div class="ic">➡️</div>
+        <h3>One Way Taxi Drop</h3>
+        <p>Pay only for the distance you travel — no return charges added to your fare.</p>
+        <div class="card-ctas"><a class="ca-know" href="#">Know More</a><a class="ca-book" href="#booking">Book Now</a></div>
+      </div>
+      <div class="service-card">
+        <div class="ic">🔁</div>
+        <h3>Round Trip Service</h3>
+        <p>Comfortable outstation trips with flexible waiting time built in.</p>
+        <div class="card-ctas"><a class="ca-know" href="#">Know More</a><a class="ca-book" href="#booking">Book Now</a></div>
+      </div>
+      <div class="service-card">
+        <div class="ic">✈️</div>
+        <h3>Airport Transfer</h3>
+        <p>Timely pickups and drops — never miss a flight again.</p>
+        <div class="card-ctas"><a class="ca-know" href="#">Know More</a><a class="ca-book" href="#booking">Book Now</a></div>
+      </div>
+      <div class="service-card">
+        <div class="ic">🕐</div>
+        <h3>Hourly Rental Packages</h3>
+        <p>Local rentals for city errands, meetings, and same-day plans.</p>
+        <div class="card-ctas"><a class="ca-know" href="#">Know More</a><a class="ca-book" href="#booking">Book Now</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RATES / FLEET ================= -->
+<section class="section" id="rates" style="background:var(--paper-dim);">
+  <div class="wrap">
+    <div class="eyebrow">Fare Meter</div>
+    <div class="section-head"><h2>Our Flexible Taxi Rates</h2><p>Transparent, per-km pricing so you know the fare before you ride.</p></div>
+    <div class="meter-panel">
+      <table class="rates">
+        <thead><tr><th>Vehicle</th><th>Oneway</th><th>Round Trip</th><th>Driver Beta</th><th>Seats</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="veh">Sedan</td><td class="rate">₹14/km</td><td class="rate">₹13/km</td><td>₹300</td><td>4+1</td><td><a class="rate-book" href="#booking">Book Now</a></td></tr>
+          <tr><td class="veh">Luxury Sedan</td><td class="rate">₹15/km</td><td class="rate">₹14/km</td><td>₹400</td><td>4+1</td><td><a class="rate-book" href="#booking">Book Now</a></td></tr>
+          <tr><td class="veh">SUV</td><td class="rate">₹19/km</td><td class="rate">₹18/km</td><td>₹400</td><td>7+1</td><td><a class="rate-book" href="#booking">Book Now</a></td></tr>
+          <tr><td class="veh">Luxury SUV</td><td class="rate">₹23/km</td><td class="rate">₹22/km</td><td>₹600</td><td>7+1</td><td><a class="rate-book" href="#booking">Book Now</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="fare-notes">
+      <div><b>MIN ONEWAY</b>130 km average per one-way trip</div>
+      <div><b>MIN ROUND TRIP</b>250 km average per round trip</div>
+      <div><b>EXTRA BETA</b>Applies if a trip exceeds 12 hours</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT ================= -->
+<section class="section" id="about">
+  <div class="wrap about-grid">
+    <div class="about-media"><div class="play-btn">▶</div></div>
+    <div>
+      <div class="eyebrow">About Us</div>
+      <h2 style="font-size:clamp(26px,3.4vw,38px); margin-bottom:14px;">About Vels Drop Taxi</h2>
+      <p style="color:var(--ink-soft); max-width:520px;">Vels Drop Taxi has been serving Tamil Nadu, Chennai, Coimbatore, and Bangalore with safe, reliable, and affordable taxi services — one-way, round trip, airport transfer, and outstation travel.</p>
+      <div class="about-counter"><b>200+</b> Satisfied Clients</div><br>
+      <a class="btn btn-secondary" href="#">Read Our Full Story →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ROUTES ================= -->
+<section class="section" id="routes" style="background:var(--paper-dim);">
+  <div class="wrap">
+    <div class="eyebrow">High-Demand Routes</div>
+    <div class="section-head"><h2>Popular Taxi Routes We Serve</h2><p>Fixed-route fares and travel times for the journeys booked most often.</p></div>
+    <div class="routes-grid">
+      <div class="route-card"><h4>Trichy to Chennai Taxi</h4><div class="route-meta"><span>~320 km</span><span>~5.5 hrs</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+      <div class="route-card"><h4>Chennai to Bangalore Taxi</h4><div class="route-meta"><span>~345 km</span><span>~6 hrs</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+      <div class="route-card"><h4>Coimbatore to Chennai Taxi</h4><div class="route-meta"><span>~500 km</span><span>~8 hrs</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+      <div class="route-card"><h4>Trichy to Madurai Taxi</h4><div class="route-meta"><span>~135 km</span><span>~2.5 hrs</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+      <div class="route-card"><h4>Chennai to Pondicherry Taxi</h4><div class="route-meta"><span>~160 km</span><span>~3 hrs</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+      <div class="route-card"><h4>Trichy to Coimbatore Taxi</h4><div class="route-meta"><span>~200 km</span><span>~3.5 hrs</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+      <div class="route-card"><h4>Chennai Airport Taxi</h4><div class="route-meta"><span>City transfer</span><span>On-time</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+      <div class="route-card"><h4>Coimbatore Airport Taxi</h4><div class="route-meta"><span>City transfer</span><span>On-time</span></div><a class="rbtn" href="#booking">Book This Route</a></div>
+    </div>
+    <div class="view-all-wrap"><a class="btn btn-secondary" href="#">View All Routes →</a></div>
+  </div>
+</section>
+
+<!-- ================= WHY CHOOSE US ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="eyebrow">Why Choose Us</div>
+    <div class="section-head"><h2>Your Trusted Taxi Partner</h2></div>
+    <div class="why-grid">
+      <div class="why-item"><div class="ic">🛡️</div><div><h4>Safe &amp; Secure Rides</h4><p>Verified vehicles and background-checked drivers on every trip.</p></div></div>
+      <div class="why-item"><div class="ic">⏱️</div><div><h4>On-Time Pickup</h4><p>Drivers arrive ahead of schedule so you're never left waiting.</p></div></div>
+      <div class="why-item"><div class="ic">💰</div><div><h4>Affordable, Transparent Pricing</h4><p>Know your fare upfront — no hidden charges at drop-off.</p></div></div>
+      <div class="why-item"><div class="ic">🛋️</div><div><h4>Comfortable Travel</h4><p>Clean, well-maintained sedans and SUVs for every trip length.</p></div></div>
+      <div class="why-item"><div class="ic">🧑‍✈️</div><div><h4>Verified, Experienced Drivers</h4><p>Local route knowledge across Tamil Nadu, Chennai, and Bangalore.</p></div></div>
+      <div class="why-item"><div class="ic">📞</div><div><h4>24/7 Booking Support</h4><p>Reach a real person any hour of the day for help or changes.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="section" style="background:var(--paper-dim);">
+  <div class="wrap">
+    <div class="eyebrow">The Process</div>
+    <div class="section-head"><h2>Easy Steps to Book Your Taxi</h2></div>
+    <div class="steps-row">
+      <div class="step"><div class="num">01</div><h4>Search &amp; Choose Your Taxi</h4><p>Pick sedan, SUV, or luxury based on your group size.</p></div>
+      <div class="step"><div class="num">02</div><h4>Enter Pickup &amp; Drop Locations</h4><p>Tell us where the journey starts and ends.</p></div>
+      <div class="step"><div class="num">03</div><h4>Confirm Passengers &amp; Timing</h4><p>Set your date, time, and number of travellers.</p></div>
+      <div class="step"><div class="num">04</div><h4>Ride Safely to Your Destination</h4><p>Your driver arrives on time and gets you there.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="eyebrow">Reviews</div>
+    <div class="section-head"><h2>What Our Customers Say</h2></div>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p>"Smooth booking and the driver was right on time for our early airport run."</p>
+        <div class="test-who"><div class="av">AK</div><div><b>Arun Kumar</b><span>Chennai</span></div></div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p>"Fair pricing, clean car, and no surprise charges at the end of the trip."</p>
+        <div class="test-who"><div class="av">PS</div><div><b>Priya Sharma</b><span>Coimbatore</span></div></div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p>"Booked a round trip on short notice and everything was handled well."</p>
+        <div class="test-who"><div class="av">KR</div><div><b>Karthik Raj</b><span>Erode</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="section" id="faq" style="background:var(--paper-dim);">
+  <div class="wrap" style="max-width:820px;">
+    <div class="eyebrow">Common Questions</div>
+    <div class="section-head" style="margin-bottom:10px;"><h2>Frequently Asked Questions</h2></div>
+    <div id="faqList">
+      <div class="faq-item open">
+        <button class="faq-q">How much does a one-way taxi from Trichy to Chennai cost? <span class="plus">+</span></button>
+        <div class="faq-a">Based on a sedan at ₹14/km with a 130 km minimum, a Trichy–Chennai one-way trip is priced on actual distance travelled.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do I need to pay for the return trip in a one-way drop taxi? <span class="plus">+</span></button>
+        <div class="faq-a">No — one-way drop means you're charged only for the distance travelled to your destination, not the return.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What is included in the driver batta/allowance? <span class="plus">+</span></button>
+        <div class="faq-a">The driver batta covers meals and rest for the driver on longer trips and is listed upfront in your fare.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do you provide airport pickup at night? <span class="plus">+</span></button>
+        <div class="faq-a">Yes, airport transfers run 24/7, including late-night and early-morning flights.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What vehicles are available — sedan, SUV, luxury? <span class="plus">+</span></button>
+        <div class="faq-a">Sedan, Luxury Sedan, SUV, and Luxury SUV, seating 4 to 7 passengers plus driver.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is advance payment required to book a taxi? <span class="plus">+</span></button>
+        <div class="faq-a">Booking terms vary by trip type — our team will confirm advance payment details when you book.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Can I book a round trip with multiple stops? <span class="plus">+</span></button>
+        <div class="faq-a">Yes, round trips can include multiple stops along the way — just mention them when booking.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BLOG ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="eyebrow">Travel Tips</div>
+    <div class="section-head"><h2>Travel Tips &amp; Taxi Guides</h2></div>
+    <div class="blog-grid">
+      <div class="blog-card"><div class="blog-thumb"></div><div class="blog-body"><span class="tag">Fares</span><h4>Trichy to Chennai Taxi Fare Guide 2026</h4></div></div>
+      <div class="blog-card"><div class="blog-thumb" style="background:linear-gradient(135deg,var(--teal),var(--teal-deep));"></div><div class="blog-body"><span class="tag">Guide</span><h4>One Way vs Round Trip Taxi: Which Should You Book?</h4></div></div>
+      <div class="blog-card"><div class="blog-thumb" style="background:linear-gradient(135deg,var(--signal),#a5321f);"></div><div class="blog-body"><span class="tag">Airport</span><h4>Airport Taxi Booking Tips for First-Time Travelers</h4></div></div>
+      <div class="blog-card"><div class="blog-thumb" style="background:linear-gradient(135deg,#4B5359,#15181B);"></div><div class="blog-body"><span class="tag">Vehicles</span><h4>Sedan vs SUV: Choosing the Right Taxi for Your Trip</h4></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">VELS DROP TAXI</div>
+        <p style="font-size:14px; max-width:280px;">Reliable one-way, round trip, and airport taxi service across Tamil Nadu, Chennai, Coimbatore, and Bangalore.</p>
+      </div>
+      <div><h5>Quick Links</h5><ul><li><a href="#">Home</a></li><li><a href="#about">About</a></li><li><a href="#services">Services</a></li><li><a href="#rates">Tariff</a></li><li><a href="#">Gallery</a></li><li><a href="#">Contact</a></li></ul></div>
+      <div><h5>Services</h5><ul><li><a href="#">One Way</a></li><li><a href="#">Round Trip</a></li><li><a href="#">Airport Transfer</a></li><li><a href="#">Hourly Rental</a></li></ul></div>
+      <div><h5>Areas We Serve</h5><ul><li><a href="#">Chennai</a></li><li><a href="#">Coimbatore</a></li><li><a href="#">Trichy</a></li><li><a href="#">Madurai</a></li><li><a href="#">Bangalore</a></li></ul></div>
+      <div>
+        <h5>Get In Touch</h5>
+        <ul><li>📞 +91 00000 00000</li><li>✉️ book@velsdroptaxi.com</li><li>📍 Trichy, Tamil Nadu</li></ul>
+        <div class="foot-news"><input type="email" placeholder="Your email"><button>Join</button></div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Vels Drop Taxi. All rights reserved.</span>
+      <span>Privacy Policy · Terms of Service</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function showTab(name){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('panel-'+name).classList.add('active');
+  }
+  document.querySelectorAll('.faq-q').forEach(q=>{
+    q.addEventListener('click', ()=>{
+      const item = q.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>
